@@ -16,7 +16,6 @@ const apiRoutes = require('./routes/apiRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 
 const app = express();
-app.set('trust proxy', 1);
 const isProduction = process.env.NODE_ENV === 'production';
 const sessionSecret = process.env.SESSION_SECRET || 'dev_secret_change_me';
 
@@ -48,7 +47,7 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    secure: isProduction ? 'auto' : false,
+    secure: isProduction,
     sameSite: 'lax',
     maxAge: 1000 * 60 * 60 * 8
   }
@@ -70,8 +69,6 @@ app.use('/batches', batchRoutes);
 app.use('/history', historyRoutes);
 app.use('/api', apiRoutes);
 app.use('/settings', settingsRoutes);
-
-app.get('/dashboard', (req, res) => res.redirect('/'));
 
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 

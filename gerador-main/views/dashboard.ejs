@@ -1,0 +1,37 @@
+<%- include('partials/head', { title: 'Dashboard' }) %>
+<%- include('partials/header') %>
+<div class="container">
+  <%- include('partials/sidebar') %>
+  <main>
+    <div class="page-header">
+      <div>
+        <p class="eyebrow">visão geral</p>
+        <h1>Dashboard</h1>
+      </div>
+    </div>
+
+    <section class="cards">
+      <div class="card"><span>Total de códigos</span><strong id="totalCodes">...</strong></div>
+      <div class="card"><span>Disponíveis</span><strong id="availableCodes">...</strong></div>
+      <div class="card"><span>Usados</span><strong id="usedCodes">...</strong></div>
+      <div class="card"><span>Entregues hoje</span><strong id="todayCodes">...</strong></div>
+      <div class="card"><span>Total de lotes</span><strong id="totalBatches">...</strong></div>
+    </section>
+
+    <section class="panel">
+      <h2>Últimos códigos utilizados</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Código</th><th>Data</th></tr>
+          </thead>
+          <tbody id="lastUsedTable">
+            <tr><td colspan="2">Carregando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+<script src="/js/dashboard.js"></script>
+<%- include('partials/footer') %>

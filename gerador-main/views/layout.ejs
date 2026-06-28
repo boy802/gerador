@@ -1,0 +1,7 @@
+<%- include('partials/head', { title: typeof title !== 'undefined' ? title : 'Code Manager SaaS' }) %>
+<%- include('partials/header') %>
+<div class="container">
+  <%- include('partials/sidebar') %>
+  <main><%- typeof body !== 'undefined' ? body : '' %></main>
+</div>
+<%- include('partials/footer') %>

@@ -1,0 +1,30 @@
+<%- include('partials/head', { title: 'Configurações' }) %>
+<%- include('partials/header') %>
+<div class="container">
+  <%- include('partials/sidebar') %>
+  <main>
+    <div class="page-header">
+      <div>
+        <p class="eyebrow">sistema</p>
+        <h1>Configurações</h1>
+      </div>
+    </div>
+
+    <% if (message) { %><div class="alert success"><%= message %></div><% } %>
+
+    <form class="panel" method="POST" action="/settings">
+      <h2>Preferências</h2>
+      <div class="form-grid single">
+        <% settings.forEach(s => { %>
+          <label>
+            <%= s.key %>
+            <input type="hidden" name="key" value="<%= s.key %>">
+            <input type="text" name="value" value="<%= s.value %>">
+          </label>
+        <% }) %>
+      </div>
+      <button class="btn primary" type="submit">Salvar tudo</button>
+    </form>
+  </main>
+</div>
+<%- include('partials/footer') %>

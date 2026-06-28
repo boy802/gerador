@@ -1,0 +1,46 @@
+<%- include('partials/head', { title: 'Lotes' }) %>
+<%- include('partials/header') %>
+<div class="container">
+  <%- include('partials/sidebar') %>
+  <main>
+    <div class="page-header">
+      <div>
+        <p class="eyebrow">organização</p>
+        <h1>Lotes</h1>
+      </div>
+      <a class="btn primary" href="/codes">Gerar novo lote</a>
+    </div>
+
+    <% if (message) { %><div class="alert success"><%= message %></div><% } %>
+
+    <section class="panel">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>ID</th><th>Nome</th><th>Total</th><th>Data</th><th>Ações</th></tr>
+          </thead>
+          <tbody>
+            <% if (!batches.length) { %>
+              <tr><td colspan="5">Nenhum lote encontrado.</td></tr>
+            <% } %>
+            <% batches.forEach(batch => { %>
+              <tr>
+                <td><%= batch.id %></td>
+                <td><%= batch.name %></td>
+                <td><%= batch.total_codes %></td>
+                <td><%= batch.created_at %></td>
+                <td class="actions">
+                  <a class="btn tiny" href="/batches/<%= batch.id %>">Visualizar</a>
+                  <form method="POST" action="/batches/<%= batch.id %>?_method=DELETE" onsubmit="return confirm('Excluir este lote? Os códigos continuam salvos sem lote.')">
+                    <button class="btn danger tiny" type="submit">Excluir</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+<%- include('partials/footer') %>

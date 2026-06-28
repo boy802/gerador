@@ -1,0 +1,9 @@
+<header class="topbar">
+  <a class="brand" href="/">Code Manager</a>
+  <div class="topbar-actions">
+    <% if (user) { %>
+      <span>Olá, <strong><%= user.username %></strong></span>
+      <a class="btn ghost" href="/logout">Sair</a>
+    <% } %>
+  </div>
+</header>

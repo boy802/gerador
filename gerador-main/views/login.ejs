@@ -1,0 +1,17 @@
+<%- include('partials/head', { title: 'Login' }) %>
+<div class="login-page">
+  <form class="login-card" method="POST" action="/login">
+    <p class="eyebrow">acesso restrito</p>
+    <h1>Entrar</h1>
+    <% if (error) { %>
+      <div class="alert error"><%= error %></div>
+    <% } %>
+    <label>Usuário</label>
+    <input type="text" name="username" autocomplete="username" required>
+    <label>Senha</label>
+    <input type="password" name="password" autocomplete="current-password" required>
+    <button class="btn primary" type="submit">Entrar</button>
+    <small>Primeiro acesso local: admin / admin123, caso você não tenha definido outro no .env.</small>
+  </form>
+</div>
+<%- include('partials/footer') %>
