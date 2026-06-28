@@ -1,11 +1,11 @@
 <%- include('layout', { body: `
 <h1>Dashboard</h1>
 <div class="cards">
-  <div class="card">Total de códigos: <%= stats.total %></div>
-  <div class="card">Disponíveis: <%= stats.available %></div>
-  <div class="card">Usados: <%= stats.used %></div>
-  <div class="card">Entregues hoje: <%= stats.today %></div>
-  <div class="card">Total de lotes: <%= stats.batches %></div>
+  <div class="card" id="totalCodes">Total de códigos: ...</div>
+  <div class="card" id="availableCodes">Disponíveis: ...</div>
+  <div class="card" id="usedCodes">Usados: ...</div>
+  <div class="card" id="todayCodes">Entregues hoje: ...</div>
+  <div class="card" id="totalBatches">Total de lotes: ...</div>
 </div>
 
 <h2>Últimos códigos utilizados</h2>
@@ -13,13 +13,9 @@
   <thead>
     <tr><th>Código</th><th>Data</th></tr>
   </thead>
-  <tbody>
-    <% stats.lastUsed.forEach(item => { %>
-      <tr>
-        <td><%= item.code %></td>
-        <td><%= item.created_at %></td>
-      </tr>
-    <% }) %>
+  <tbody id="lastUsedTable">
+    <tr><td colspan="2">Carregando...</td></tr>
   </tbody>
 </table>
+<script src="/js/dashboard.js"></script>
 ` }) %>
