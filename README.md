@@ -1,69 +1,107 @@
-# Code Manager SaaS
+# Automação de códigos com Playwright
 
-Aplicação em Node.js/Express para gerar, importar, exportar e controlar o uso de códigos.
+Esse projeto abre uma página, cola os códigos **um por um**, clica no botão de envio/salvar e passa para o próximo código.
 
-## O que foi corrigido nesta versão
-
-- Inicialização automática do banco SQLite com migrations.
-- Criação automática do usuário inicial quando não existe nenhum usuário.
-- Correção das views EJS, que antes dependiam de partials inexistentes.
-- Inclusão de CSS/JS público para a interface carregar corretamente.
-- Correção dos formulários de exclusão com suporte a `_method=DELETE`.
-- Correção da geração de códigos com validação de quantidade/tamanho e tentativa contra duplicados.
-- Correção do botão “Usar” para marcar o código selecionado, não sempre o primeiro disponível.
-- Correção dos endpoints REST que estavam vazios.
-- Cookies de sessão com `httpOnly`, `sameSite` e `secure` automático em produção.
-- Exportação TXT criando a pasta `data` automaticamente.
-- Dashboard funcional usando `/api/stats`.
-
-## Requisitos
-
-- Node.js 18+
-- npm
-
-## Como rodar
+## 1. Instalar
 
 ```bash
 npm install
-cp .env.example .env
-npm run dev
+npx playwright install chromium
 ```
 
-Depois acesse:
+## 2. Configurar o `.env`
 
-```txt
-http://localhost:3000
-```
-
-Primeiro acesso padrão, caso você não altere no `.env`:
-
-```txt
-Usuário: admin
-Senha: admin123
-```
-
-> Troque `DEFAULT_ADMIN_PASSWORD` e `SESSION_SECRET` antes de usar em produção.
-
-## Scripts
+Copie o arquivo de exemplo:
 
 ```bash
-npm start      # roda em produção/local
-npm run dev    # roda com nodemon
-npm run init-db # inicializa banco e usuário inicial
-npm run check   # checa sintaxe do server.js
+cp .env.example .env
 ```
 
-## Variáveis de ambiente
+Depois edite o `.env`:
 
-Veja `.env.example`.
+```env
+TARGET_URL=https://site.com/pagina-dos-codigos
+CODE_SELECTOR=input[name="codigo"]
+SUBMIT_SELECTOR=button[type="submit"]
+DELAY_MS=1500
+HEADLESS=false
+```
 
-## Deploy
+## 3. Colocar os códigos
 
-Compatível com Render e serviços Node.js similares. Configure no ambiente:
+Edite `codigos.txt` e coloque um código por linha:
 
-- `PORT`
-- `NODE_ENV=production`
-- `SESSION_SECRET`
-- `DATABASE_PATH`
-- `DEFAULT_ADMIN_USERNAME`
-- `DEFAULT_ADMIN_PASSWORD`
+```txt
+CODIGO001
+CODIGO002
+CODIGO003
+```
+
+## 4. Rodar
+
+```bash
+npm start
+```
+
+## Como achar o CODE_SELECTOR e SUBMIT_SELECTOR
+
+Na página onde cola o código:
+
+1. Clique com botão direito no campo.
+2. Clique em **Inspecionar**.
+3. Veja se o campo tem `id`, `name` ou outro atributo.
+
+Exemplos:
+
+```html
+<input id="code">
+```
+
+Use:
+
+```env
+CODE_SELECTOR=#code
+```
+
+Outro exemplo:
+
+```html
+<input name="codigo">
+```
+
+Use:
+
+```env
+CODE_SELECTOR=input[name="codigo"]
+```
+
+Para o botão:
+
+```html
+<button id="salvar">Salvar</button>
+```
+
+Use:
+
+```env
+SUBMIT_SELECTOR=#salvar
+```
+
+## Se tiver login
+
+Preencha no `.env`:
+
+```env
+LOGIN_URL=https://site.com/login
+LOGIN_EMAIL=seu-email
+LOGIN_PASSWORD=sua-senha
+LOGIN_EMAIL_SELECTOR=input[type="email"]
+LOGIN_PASSWORD_SELECTOR=input[type="password"]
+LOGIN_SUBMIT_SELECTOR=button[type="submit"]
+```
+
+## GitHub
+
+Pode subir esse projeto direto no GitHub. Não suba o arquivo `.env`, porque ele pode ter senha.
+
+O `.gitignore` já está configurado para ignorar `.env` e `node_modules`.
