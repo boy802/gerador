@@ -1,0 +1,23 @@
+<%- include('layout', { body: `
+<h1>Lotes</h1>
+<table>
+  <thead>
+    <tr><th>ID</th><th>Nome</th><th>Data</th><th>Ações</th></tr>
+  </thead>
+  <tbody>
+    <% batches.forEach(batch => { %>
+      <tr>
+        <td><%= batch.id %></td>
+        <td><%= batch.name %></td>
+        <td><%= batch.created_at %></td>
+        <td>
+          <a href="/batches/<%= batch.id %>">Visualizar</a>
+          <form method="POST" action="/batches/<%= batch.id %>?_method=DELETE">
+            <button type="submit">Excluir</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+` }) %>
