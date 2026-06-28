@@ -3,6 +3,7 @@ const router = express.Router();
 const authController = require('../controllers/authController');
 const { isAuthenticated } = require('../middleware/authMiddleware');
 
+router.get('/', isAuthenticated, authController.getHome);
 router.get('/login', authController.getLogin);
 router.post('/login', authController.postLogin);
 router.get('/logout', isAuthenticated, authController.logout);

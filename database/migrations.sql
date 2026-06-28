@@ -5,19 +5,20 @@ CREATE TABLE IF NOT EXISTS users (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS batches (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS codes (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   code TEXT UNIQUE NOT NULL,
   batch_id INTEGER,
   used INTEGER DEFAULT 0,
+  used_at DATETIME,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY(batch_id) REFERENCES batches(id)
-);
-
-CREATE TABLE IF NOT EXISTS batches (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  FOREIGN KEY(batch_id) REFERENCES batches(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS history (
@@ -26,8 +27,8 @@ CREATE TABLE IF NOT EXISTS history (
   user_id INTEGER,
   origin TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY(code_id) REFERENCES codes(id),
-  FOREIGN KEY(user_id) REFERENCES users(id)
+  FOREIGN KEY(code_id) REFERENCES codes(id) ON DELETE CASCADE,
+  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS settings (
@@ -36,5 +37,8 @@ CREATE TABLE IF NOT EXISTS settings (
   value TEXT
 );
 
-CREATE INDEX idx_codes_code ON codes(code);
-CREATE INDEX idx_history_code_id ON history(code_id);
+CREATE INDEX IF NOT EXISTS idx_codes_code ON codes(code);
+CREATE INDEX IF NOT EXISTS idx_codes_used ON codes(used);
+CREATE INDEX IF NOT EXISTS idx_codes_batch_id ON codes(batch_id);
+CREATE INDEX IF NOT EXISTS idx_history_code_id ON history(code_id);
+CREATE INDEX IF NOT EXISTS idx_history_user_id ON history(user_id);

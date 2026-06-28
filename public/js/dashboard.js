@@ -1,26 +1,34 @@
-async function fetchStats() {
+async function loadDashboard() {
+  const totalCodes = document.getElementById('totalCodes');
+  const availableCodes = document.getElementById('availableCodes');
+  const usedCodes = document.getElementById('usedCodes');
+  const todayCodes = document.getElementById('todayCodes');
+  const totalBatches = document.getElementById('totalBatches');
+  const lastUsedTable = document.getElementById('lastUsedTable');
+
   try {
-    const res = await fetch('/api/stats');
-    const stats = await res.json();
+    const response = await fetch('/api/stats');
+    if (!response.ok) throw new Error('Falha ao carregar estatísticas');
 
-    document.getElementById('totalCodes').innerText = `Total de códigos: ${stats.total}`;
-    document.getElementById('availableCodes').innerText = `Disponíveis: ${stats.available}`;
-    document.getElementById('usedCodes').innerText = `Usados: ${stats.used}`;
-    document.getElementById('todayCodes').innerText = `Entregues hoje: ${stats.today || 0}`;
-    document.getElementById('totalBatches').innerText = `Total de lotes: ${stats.batches}`;
+    const stats = await response.json();
+    totalCodes.textContent = stats.total;
+    availableCodes.textContent = stats.available;
+    usedCodes.textContent = stats.used;
+    todayCodes.textContent = stats.usedToday;
+    totalBatches.textContent = stats.batches;
 
-    const table = document.getElementById('lastUsedTable');
-    table.innerHTML = '';
-    stats.lastUsed.forEach(item => {
-      const row = document.createElement('tr');
-      row.innerHTML = `<td>${item.code}</td><td>${item.created_at}</td>`;
-      table.appendChild(row);
-    });
-  } catch (err) {
-    console.error('Erro ao buscar stats', err);
+    if (!stats.lastUsed.length) {
+      lastUsedTable.innerHTML = '<tr><td colspan="2">Nenhum código usado ainda.</td></tr>';
+      return;
+    }
+
+    lastUsedTable.innerHTML = stats.lastUsed
+      .map(item => `<tr><td><code>${item.code || '-'}</code></td><td>${item.created_at}</td></tr>`)
+      .join('');
+  } catch (error) {
+    lastUsedTable.innerHTML = '<tr><td colspan="2">Não foi possível carregar os dados.</td></tr>';
+    console.error(error);
   }
 }
 
-// Atualiza a cada 5 segundos
-setInterval(fetchStats, 5000);
-fetchStats();
+loadDashboard();

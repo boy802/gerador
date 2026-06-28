@@ -1,27 +1,91 @@
-<%- include('layout', { body: `
-<h1>Códigos</h1>
-<table>
-  <thead>
-    <tr><th>ID</th><th>Código</th><th>Lote</th><th>Status</th><th>Ações</th></tr>
-  </thead>
-  <tbody>
-    <% codes.forEach(code => { %>
-      <tr>
-        <td><%= code.id %></td>
-        <td><%= code.code %></td>
-        <td><%= code.batch_id %></td>
-        <td><%= code.used ? 'Usado' : 'Disponível' %></td>
-        <td>
-          <form method="POST" action="/codes/use">
-            <input type="hidden" name="id" value="<%= code.id %>">
-            <button type="submit">Usar</button>
-          </form>
-          <form method="POST" action="/codes/<%= code.id %>?_method=DELETE">
-            <button type="submit">Excluir</button>
-          </form>
-        </td>
-      </tr>
-    <% }) %>
-  </tbody>
-</table>
-` }) %>
+<% const currentBatch = typeof batch !== 'undefined' ? batch : null; %>
+<%- include('partials/head', { title: currentBatch ? `Códigos do lote ${currentBatch.id}` : 'Códigos' }) %>
+<%- include('partials/header') %>
+<div class="container">
+  <%- include('partials/sidebar') %>
+  <main>
+    <div class="page-header">
+      <div>
+        <p class="eyebrow"><%= currentBatch ? 'lote' : 'gerenciamento' %></p>
+        <h1><%= currentBatch ? `Códigos do lote: ${currentBatch.name}` : 'Códigos' %></h1>
+      </div>
+      <% if (currentBatch) { %><a class="btn ghost" href="/batches">Voltar</a><% } %>
+    </div>
+
+    <% if (message) { %><div class="alert success"><%= message %></div><% } %>
+    <% if (error) { %><div class="alert error"><%= error %></div><% } %>
+
+    <% if (!currentBatch) { %>
+      <section class="grid two">
+        <form class="panel" method="POST" action="/codes/generate">
+          <h2>Gerar códigos</h2>
+          <div class="form-grid">
+            <label>Nome do lote<input type="text" name="batchName" placeholder="Lote promocional"></label>
+            <label>Quantidade<input type="number" name="quantity" min="1" max="50000" value="10" required></label>
+            <label>Tamanho<input type="number" name="length" min="1" max="64" value="8" required></label>
+            <label>Prefixo<input type="text" name="prefix" placeholder="VIP-"></label>
+            <label>Sufixo<input type="text" name="suffix" placeholder="-2026"></label>
+          </div>
+          <div class="checks">
+            <label><input type="checkbox" name="alpha" checked> Letras</label>
+            <label><input type="checkbox" name="numeric" checked> Números</label>
+          </div>
+          <button class="btn primary" type="submit">Gerar</button>
+        </form>
+
+        <form class="panel" method="POST" action="/codes/import">
+          <h2>Importar códigos</h2>
+          <label>Nome do lote<input type="text" name="batchName" placeholder="Importação manual"></label>
+          <label>Códigos, um por linha<textarea name="codesText" rows="8" placeholder="CODIGO-001&#10;CODIGO-002"></textarea></label>
+          <button class="btn primary" type="submit">Importar</button>
+        </form>
+      </section>
+    <% } %>
+
+    <section class="panel">
+      <div class="panel-header">
+        <h2>Lista de códigos</h2>
+        <% if (!currentBatch) { %>
+          <div class="actions">
+            <a class="btn ghost" href="/codes/export?type=available">Exportar disponíveis</a>
+            <a class="btn ghost" href="/codes/export?type=used">Exportar usados</a>
+            <a class="btn ghost" href="/codes/export">Exportar todos</a>
+          </div>
+        <% } %>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>ID</th><th>Código</th><th>Lote</th><th>Status</th><th>Criado em</th><th>Ações</th></tr>
+          </thead>
+          <tbody>
+            <% if (!codes.length) { %>
+              <tr><td colspan="6">Nenhum código encontrado.</td></tr>
+            <% } %>
+            <% codes.forEach(code => { %>
+              <tr>
+                <td><%= code.id %></td>
+                <td><code><%= code.code %></code></td>
+                <td><%= code.batch_id || '-' %></td>
+                <td><span class="badge <%= code.used ? 'used' : 'available' %>"><%= code.used ? 'Usado' : 'Disponível' %></span></td>
+                <td><%= code.created_at %></td>
+                <td class="actions">
+                  <% if (!code.used) { %>
+                    <form method="POST" action="/codes/use">
+                      <input type="hidden" name="id" value="<%= code.id %>">
+                      <button class="btn tiny" type="submit">Usar</button>
+                    </form>
+                  <% } %>
+                  <form method="POST" action="/codes/<%= code.id %>?_method=DELETE" onsubmit="return confirm('Excluir este código?')">
+                    <button class="btn danger tiny" type="submit">Excluir</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+<%- include('partials/footer') %>
