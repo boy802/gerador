@@ -14,6 +14,7 @@ const batchRoutes = require('./routes/batchRoutes');
 const historyRoutes = require('./routes/historyRoutes');
 const apiRoutes = require('./routes/apiRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
+const automationRoutes = require('./routes/automationRoutes');
 
 const app = express();
 app.set('trust proxy', 1);
@@ -70,6 +71,7 @@ app.use('/batches', batchRoutes);
 app.use('/history', historyRoutes);
 app.use('/api', apiRoutes);
 app.use('/settings', settingsRoutes);
+app.use('/automation', automationRoutes);
 
 app.get('/dashboard', (req, res) => res.redirect('/'));
 

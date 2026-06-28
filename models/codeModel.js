@@ -12,6 +12,11 @@ exports.findById = (id) => db.prepare('SELECT * FROM codes WHERE id = ?').get(id
 
 exports.getNextAvailable = () => db.prepare('SELECT * FROM codes WHERE used = 0 ORDER BY id ASC LIMIT 1').get();
 
+exports.getAvailable = (limit = 50) => {
+  const safeLimit = Math.min(Math.max(Number(limit) || 50, 1), 500);
+  return db.prepare('SELECT * FROM codes WHERE used = 0 ORDER BY id ASC LIMIT ?').all(safeLimit);
+};
+
 exports.markUsed = (id) => db.prepare('UPDATE codes SET used = 1, used_at = CURRENT_TIMESTAMP WHERE id = ? AND used = 0').run(id);
 
 exports.delete = (id) => db.prepare('DELETE FROM codes WHERE id = ?').run(id);

@@ -1,0 +1,159 @@
+<%- include('partials/head', { title: 'Automação' }) %>
+<%- include('partials/header') %>
+<div class="container">
+  <%- include('partials/sidebar') %>
+  <main>
+    <div class="page-header">
+      <div>
+        <p class="eyebrow">envio automático</p>
+        <h1>Automação de códigos</h1>
+      </div>
+      <a class="btn ghost" href="/codes">Ver códigos</a>
+    </div>
+
+    <% if (message) { %><div class="alert success"><%= message %></div><% } %>
+    <% if (error) { %><div class="alert error"><%= error %></div><% } %>
+
+    <section class="panel automation-note">
+      <h2>Como funciona</h2>
+      <p>Esse painel pega os códigos do gerador e cola um por um na página configurada. Use somente em páginas onde você tem autorização de acesso.</p>
+      <p><strong>Disponíveis no sistema:</strong> <%= availableCount %> código(s).</p>
+    </section>
+
+    <form class="panel" method="POST" action="/automation/run" onsubmit="return confirm('Iniciar a automação agora? Deixe poucos códigos no primeiro teste.')">
+      <h2>1. Página de destino</h2>
+      <div class="form-grid">
+        <label>
+          URL da página
+          <input type="url" name="targetUrl" placeholder="https://site.com/pagina" value="<%= config.targetUrl || '' %>" required>
+        </label>
+        <label>
+          Seletor do campo do código
+          <input type="text" name="codeSelector" placeholder="#codigo ou input[name='codigo']" value="<%= config.codeSelector || '' %>" required>
+        </label>
+        <label>
+          Seletor do botão de enviar/salvar
+          <input type="text" name="submitSelector" placeholder="#salvar ou button[type='submit']" value="<%= config.submitSelector || '' %>" required>
+        </label>
+        <label>
+          Seletor de sucesso opcional
+          <input type="text" name="successSelector" placeholder=".alert-success, se existir" value="<%= config.successSelector || '' %>">
+        </label>
+        <label>
+          Seletor de limpar/novo opcional
+          <input type="text" name="resetSelector" placeholder="#novoCodigo, se existir" value="<%= config.resetSelector || '' %>">
+        </label>
+        <label>
+          Voltar para URL após cada envio?
+          <select name="returnToTarget">
+            <option value="off" <%= !config.returnToTarget ? 'selected' : '' %>>Não</option>
+            <option value="on" <%= config.returnToTarget ? 'selected' : '' %>>Sim</option>
+          </select>
+        </label>
+      </div>
+
+      <h2>2. Login automático opcional</h2>
+      <div class="form-grid">
+        <label>
+          URL de login
+          <input type="url" name="loginUrl" placeholder="https://site.com/login" value="<%= config.loginUrl || '' %>">
+        </label>
+        <label>
+          Seletor usuário/e-mail
+          <input type="text" name="loginUserSelector" placeholder="input[name='email']" value="<%= config.loginUserSelector || '' %>">
+        </label>
+        <label>
+          Seletor senha
+          <input type="text" name="loginPasswordSelector" placeholder="input[type='password']" value="<%= config.loginPasswordSelector || '' %>">
+        </label>
+        <label>
+          Seletor botão login
+          <input type="text" name="loginSubmitSelector" placeholder="button[type='submit']" value="<%= config.loginSubmitSelector || '' %>">
+        </label>
+        <label>
+          Usuário/e-mail
+          <input type="text" name="loginUsername" autocomplete="username" value="<%= config.loginUsername || '' %>">
+        </label>
+        <label>
+          Senha
+          <input type="password" name="loginPassword" autocomplete="current-password" placeholder="não fica salva no painel">
+        </label>
+      </div>
+
+      <h2>3. Códigos</h2>
+      <div class="form-grid">
+        <label>
+          Origem dos códigos
+          <select name="codesSource" id="codesSource">
+            <option value="available" <%= config.codesSource !== 'manual' ? 'selected' : '' %>>Usar disponíveis do gerador</option>
+            <option value="manual" <%= config.codesSource === 'manual' ? 'selected' : '' %>>Colar manualmente</option>
+          </select>
+        </label>
+        <label>
+          Quantidade máxima do gerador
+          <input type="number" name="limit" min="1" max="500" value="<%= config.limit || 10 %>">
+        </label>
+      </div>
+      <label class="manual-codes-field">
+        Códigos manuais, um por linha
+        <textarea name="manualCodes" rows="7" placeholder="CODIGO001&#10;CODIGO002&#10;CODIGO003"><%= config.manualCodes || '' %></textarea>
+      </label>
+
+      <h2>4. Execução</h2>
+      <div class="form-grid">
+        <label>
+          Intervalo entre códigos, em ms
+          <input type="number" name="delayMs" min="200" max="60000" value="<%= config.delayMs || 1500 %>">
+        </label>
+        <label>
+          Timeout, em ms
+          <input type="number" name="navigationTimeoutMs" min="5000" max="120000" value="<%= config.navigationTimeoutMs || 30000 %>">
+        </label>
+      </div>
+      <div class="checks wrap">
+        <label><input type="checkbox" name="headless" <%= config.headless !== false ? 'checked' : '' %>> Rodar navegador invisível</label>
+        <label><input type="checkbox" name="continueOnError" <%= config.continueOnError !== false ? 'checked' : '' %>> Continuar mesmo se um código der erro</label>
+        <label><input type="checkbox" name="markUsed" <%= config.markUsed !== false ? 'checked' : '' %>> Marcar como usado quando enviar</label>
+      </div>
+
+      <button class="btn primary" type="submit">Executar automação</button>
+    </form>
+
+    <% if (result) { %>
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Resultado</h2>
+          <span class="badge available"><%= result.ok %> ok</span>
+          <% if (result.failed) { %><span class="badge used"><%= result.failed %> erro(s)</span><% } %>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Código</th><th>Status</th><th>Mensagem</th></tr>
+            </thead>
+            <tbody>
+              <% result.items.forEach(item => { %>
+                <tr>
+                  <td><code><%= item.code %></code></td>
+                  <td><span class="badge <%= item.status === 'ok' ? 'available' : 'used' %>"><%= item.status %></span></td>
+                  <td><%= item.message %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    <% } %>
+  </main>
+</div>
+<script>
+  const sourceSelect = document.getElementById('codesSource');
+  const manualField = document.querySelector('.manual-codes-field');
+  function toggleManualField() {
+    if (!sourceSelect || !manualField) return;
+    manualField.style.display = sourceSelect.value === 'manual' ? 'grid' : 'none';
+  }
+  sourceSelect?.addEventListener('change', toggleManualField);
+  toggleManualField();
+</script>
+<%- include('partials/footer') %>

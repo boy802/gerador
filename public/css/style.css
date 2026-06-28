@@ -170,3 +170,13 @@ code { background: #f1f5f9; padding: 4px 8px; border-radius: 8px; }
   .page-header, .panel-header { align-items: flex-start; flex-direction: column; }
   .cards, .form-grid { grid-template-columns: 1fr; }
 }
+select {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: #fff;
+  color: var(--text);
+}
+.checks.wrap { flex-wrap: wrap; }
+.automation-note p { color: #475569; line-height: 1.6; margin: 8px 0; }

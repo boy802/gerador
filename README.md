@@ -1,107 +1,115 @@
-# Automação de códigos com Playwright
+# Code Manager SaaS + Automação
 
-Esse projeto abre uma página, cola os códigos **um por um**, clica no botão de envio/salvar e passa para o próximo código.
+Aplicação Node.js/Express para gerar, importar, exportar, controlar e automatizar o envio de códigos um por um em uma página externa.
 
-## 1. Instalar
+## O que tem nesta versão
+
+- Login com sessão.
+- Dashboard com estatísticas.
+- Geração de códigos por lote.
+- Importação manual de códigos.
+- Exportação de códigos disponíveis, usados ou todos.
+- Histórico de uso.
+- Banco SQLite inicializado automaticamente.
+- Painel **Automação** integrado ao sistema.
+- Automação com Playwright para abrir uma página, colar um código por vez e clicar em enviar/salvar.
+- Opção de usar os códigos disponíveis do próprio gerador ou colar códigos manualmente.
+- Opção de marcar os códigos como usados após envio.
+
+## Requisitos
+
+- Node.js 20
+- npm
+
+## Como rodar localmente
 
 ```bash
 npm install
 npx playwright install chromium
-```
-
-## 2. Configurar o `.env`
-
-Copie o arquivo de exemplo:
-
-```bash
 cp .env.example .env
+npm run dev
 ```
 
-Depois edite o `.env`:
-
-```env
-TARGET_URL=https://site.com/pagina-dos-codigos
-CODE_SELECTOR=input[name="codigo"]
-SUBMIT_SELECTOR=button[type="submit"]
-DELAY_MS=1500
-HEADLESS=false
-```
-
-## 3. Colocar os códigos
-
-Edite `codigos.txt` e coloque um código por linha:
+Depois acesse:
 
 ```txt
-CODIGO001
-CODIGO002
-CODIGO003
+http://localhost:3000
 ```
 
-## 4. Rodar
+Primeiro acesso padrão, caso você não altere no `.env`:
+
+```txt
+Usuário: admin
+Senha: admin123
+```
+
+Troque `DEFAULT_ADMIN_PASSWORD` e `SESSION_SECRET` antes de usar em produção.
+
+## Como usar a automação
+
+1. Entre no sistema.
+2. Vá no menu **Automação**.
+3. Informe a URL da página onde os códigos serão colados.
+4. Informe o seletor do campo do código.
+5. Informe o seletor do botão de enviar/salvar.
+6. Escolha se vai usar os códigos disponíveis do gerador ou colar manualmente.
+7. Clique em **Executar automação**.
+
+Exemplos de seletores:
+
+```txt
+#codigo
+input[name="codigo"]
+button[type="submit"]
+#salvar
+```
+
+Para descobrir o seletor, abra a página, clique com o botão direito no campo, escolha **Inspecionar** e copie o `id`, `name` ou classe do elemento.
+
+## Deploy no Render
+
+Configuração básica:
+
+```txt
+Build Command: npm install && npx playwright install chromium
+Start Command: npm start
+```
+
+Variáveis de ambiente recomendadas:
+
+```env
+NODE_ENV=production
+NODE_VERSION=20
+SESSION_SECRET=troque_por_uma_chave_grande
+DATABASE_PATH=./data/app.db
+DEFAULT_ADMIN_USERNAME=admin
+DEFAULT_ADMIN_PASSWORD=troque_essa_senha
+RATE_LIMIT_MAX=100
+DB_DEBUG=false
+```
+
+Para uso real com SQLite no Render, use disco persistente:
+
+```env
+DATABASE_PATH=/var/data/app.db
+```
+
+E configure o Disk no Render com:
+
+```txt
+Mount Path: /var/data
+```
+
+## Atenção sobre automação
+
+Use a automação apenas em páginas onde você tem permissão. Alguns sites podem bloquear automações ou exigir seletores diferentes depois de atualizações.
+
+## Scripts
 
 ```bash
-npm start
+npm start           # roda em produção/local
+npm run dev         # roda com nodemon
+npm run init-db     # inicializa banco e usuário inicial
+npm run check       # checa sintaxe dos arquivos principais
+npm run install-browser # instala Chromium do Playwright
 ```
-
-## Como achar o CODE_SELECTOR e SUBMIT_SELECTOR
-
-Na página onde cola o código:
-
-1. Clique com botão direito no campo.
-2. Clique em **Inspecionar**.
-3. Veja se o campo tem `id`, `name` ou outro atributo.
-
-Exemplos:
-
-```html
-<input id="code">
-```
-
-Use:
-
-```env
-CODE_SELECTOR=#code
-```
-
-Outro exemplo:
-
-```html
-<input name="codigo">
-```
-
-Use:
-
-```env
-CODE_SELECTOR=input[name="codigo"]
-```
-
-Para o botão:
-
-```html
-<button id="salvar">Salvar</button>
-```
-
-Use:
-
-```env
-SUBMIT_SELECTOR=#salvar
-```
-
-## Se tiver login
-
-Preencha no `.env`:
-
-```env
-LOGIN_URL=https://site.com/login
-LOGIN_EMAIL=seu-email
-LOGIN_PASSWORD=sua-senha
-LOGIN_EMAIL_SELECTOR=input[type="email"]
-LOGIN_PASSWORD_SELECTOR=input[type="password"]
-LOGIN_SUBMIT_SELECTOR=button[type="submit"]
-```
-
-## GitHub
-
-Pode subir esse projeto direto no GitHub. Não suba o arquivo `.env`, porque ele pode ter senha.
-
-O `.gitignore` já está configurado para ignorar `.env` e `node_modules`.
