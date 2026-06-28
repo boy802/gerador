@@ -1,0 +1,18 @@
+<%- include('layout', { body: `
+<h1>Histórico</h1>
+<table>
+  <thead>
+    <tr><th>Código</th><th>Usuário</th><th>Origem</th><th>Data</th></tr>
+  </thead>
+  <tbody>
+    <% history.forEach(item => { %>
+      <tr>
+        <td><%= item.code %></td>
+        <td><%= item.username %></td>
+        <td><%= item.origin %></td>
+        <td><%= item.created_at %></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+` }) %>
