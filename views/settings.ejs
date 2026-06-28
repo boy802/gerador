@@ -1,0 +1,11 @@
+<%- include('layout', { body: `
+<h1>Configurações</h1>
+<form method="POST" action="/settings">
+  <% settings.forEach(s => { %>
+    <label><%= s.key %></label>
+    <input type="text" name="value" value="<%= s.value %>">
+    <input type="hidden" name="key" value="<%= s.key %>">
+    <button type="submit">Salvar</button>
+  <% }) %>
+</form>
+` }) %>
