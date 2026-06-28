@@ -1,3 +1,45 @@
+# Gerador de Códigos com Automação
+
+## Correção importante de deploy
+
+Este projeto deve rodar com **Node 20**. Se o ambiente usar Node 24, o `better-sqlite3` pode tentar compilar e quebrar.
+
+No Render, configure:
+
+```env
+NODE_VERSION=20
+NODE_ENV=production
+DATABASE_PATH=./data/app.db
+SESSION_SECRET=uma_chave_grande_aqui
+DEFAULT_ADMIN_USERNAME=admin
+DEFAULT_ADMIN_PASSWORD=sua_senha_forte
+```
+
+Build Command:
+
+```bash
+npm install && npx playwright install chromium
+```
+
+Start Command:
+
+```bash
+npm start
+```
+
+Se estiver no GitHub Codespaces, rode:
+
+```bash
+nvm install 20
+nvm use 20
+rm -rf node_modules package-lock.json
+npm install
+npx playwright install chromium
+npm start
+```
+
+---
+
 # Code Manager SaaS + Automação
 
 Aplicação Node.js/Express para gerar, importar, exportar, controlar e automatizar o envio de códigos um por um em uma página externa.

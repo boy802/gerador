@@ -1,0 +1,18 @@
+{
+  "name": "automacao-codigos-playwright",
+  "version": "1.0.0",
+  "description": "Automação para colar e enviar códigos um por um em uma página específica usando Playwright.",
+  "main": "automacao-codigos.js",
+  "scripts": {
+    "start": "node automacao-codigos.js",
+    "install:browsers": "npx playwright install chromium",
+    "debug": "PWDEBUG=1 node automacao-codigos.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "playwright": "^1.49.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

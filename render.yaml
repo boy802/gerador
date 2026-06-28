@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: gerador-codigos
+    runtime: node
+    plan: free
+    buildCommand: npm install && npx playwright install chromium
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 20
+      - key: DATABASE_PATH
+        value: ./data/app.db
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: DEFAULT_ADMIN_USERNAME
+        value: admin
+      - key: DEFAULT_ADMIN_PASSWORD
+        sync: false
+      - key: RATE_LIMIT_MAX
+        value: 100
+      - key: DB_DEBUG
+        value: false
