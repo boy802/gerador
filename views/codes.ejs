@@ -1,0 +1,27 @@
+<%- include('layout', { body: `
+<h1>Códigos</h1>
+<table>
+  <thead>
+    <tr><th>ID</th><th>Código</th><th>Lote</th><th>Status</th><th>Ações</th></tr>
+  </thead>
+  <tbody>
+    <% codes.forEach(code => { %>
+      <tr>
+        <td><%= code.id %></td>
+        <td><%= code.code %></td>
+        <td><%= code.batch_id %></td>
+        <td><%= code.used ? 'Usado' : 'Disponível' %></td>
+        <td>
+          <form method="POST" action="/codes/use">
+            <input type="hidden" name="id" value="<%= code.id %>">
+            <button type="submit">Usar</button>
+          </form>
+          <form method="POST" action="/codes/<%= code.id %>?_method=DELETE">
+            <button type="submit">Excluir</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+` }) %>
