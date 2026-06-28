@@ -16,6 +16,7 @@ const apiRoutes = require('./routes/apiRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 
 const app = express();
+app.set('trust proxy', 1);
 const isProduction = process.env.NODE_ENV === 'production';
 const sessionSecret = process.env.SESSION_SECRET || 'dev_secret_change_me';
 
